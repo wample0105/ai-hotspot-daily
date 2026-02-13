@@ -51,6 +51,19 @@ function getEmoji(source: string): string {
   return emojis[source] || '📰'
 }
 
+// 分享功能
+function shareToWeixin(title: string, url: string) {
+  if (navigator.share) {
+    navigator.share({
+      title: title,
+      url: url,
+    }).catch(() => {})
+  } else {
+    navigator.clipboard.writeText(`${title} ${url}`)
+    alert('链接已复制，可粘贴到微信分享')
+  }
+}
+
 export default function TodayPage() {
   const report = getLatestReport()
   
@@ -59,71 +72,79 @@ export default function TodayPage() {
   }
   
   const top10 = report.items.slice(0, 10)
-  const dateStr = new Date(report.date).toLocaleDateString('zh-CN')
+  const dateStr = new Date(report.date).toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
   
   return (
     <div>
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <Link href="/" className="text-blue-600 hover:underline mb-2 inline-block">← 返回首页</Link>
-          <h1 className="text-3xl font-bold">🔥 {dateStr} 详细报告</h1>
-          <p className="text-gray-600">共 {report.total} 条高质量内容 | TOP 10</p>
-        </div>
+      <div className="mb-8">
+        <Link href="/" style={{ color: '#4f46e5', textDecoration: 'none', display: 'inline-block', marginBottom: '12px' }}>← 返回首页</Link>
+        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '8px' }}>🔥 {dateStr} 详细报告</h1>
+        <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>共 {report.total} 条高质量内容 | TOP 10</p>
       </div>
       
-      <div className="space-y-6">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         {top10.map((item) => (
-          <div key={item.rank} className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <span className="text-3xl">{getEmoji(item.source)}</span>
+          <div key={item.rank} className="card-soft p-6">
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '16px', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+                <span className="emoji-lg">{getEmoji(item.source)}</span>
                 <div>
-                  <span className="text-sm text-gray-500">#{item.rank}</span>
-                  <h2 className="text-xl font-bold">{item.title}</h2>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                    <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>#{item.rank}</span>
+                    {item.rank <= 3 && <span className="badge-hot">HOT</span>}
+                  </div>
+                  <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#1f2937', margin: 0 }}>{item.title}</h2>
                 </div>
               </div>
-              <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full">
-                {item.relevanceScore}分
-              </span>
+              <span className="badge-score">{item.relevanceScore}分</span>
             </div>
             
-            <div className="bg-gray-50 p-4 rounded-lg mb-4">
-              <p className="text-gray-700 mb-2">
-                <span className="font-semibold">📋 摘要：</span>
+            <div style={{ background: '#f9fafb', padding: '16px', borderRadius: '12px', marginBottom: '16px' }}>
+              <p style={{ color: '#374151', marginBottom: '8px', lineHeight: 1.6 }}>
+                <span style={{ fontWeight: 600 }}>📋 摘要：</span>
                 {item.summary || item.description}
               </p>
               
               {item.suggestedTopic && (
-                <p className="text-gray-600">
-                  <span className="font-semibold">📝 选题建议：</span>
+                <p style={{ color: '#4b5563', fontSize: '0.875rem' }}>
+                  <span style={{ fontWeight: 600 }}>📝 选题建议：</span>
                   {item.suggestedTopic}
                 </p>
               )}
             </div>
             
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4 text-sm text-gray-500">
-                {item.stars && <span>⭐ {item.stars.toLocaleString()} stars</span>}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', color: '#6b7280', fontSize: '0.875rem' }}>
+                {item.stars && <span>⭐ {item.stars.toLocaleString()}</span>}
                 {item.score && <span>👍 {item.score}</span>}
                 {item.comments !== undefined && <span>💬 {item.comments}</span>}
-                <span className="text-gray-400">|</span>
-                <span>来源: {item.source}</span>
+                <button 
+                  onClick={() => shareToWeixin(item.title, item.url)}
+                  className="btn-share"
+                >
+                  📤 分享
+                </button>
               </div>
               
               <a 
                 href={item.url}
                 target="_blank"
-                rel="noopener noreferrer" 
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                rel="noopener noreferrer"
+                className="btn-primary"
+                style={{ fontSize: '0.875rem', padding: '10px 20px' }}
               >
                 查看原文 →
               </a>
             </div>
             
             {item.tags.length > 0 && (
-              <div className="mt-4 flex gap-2">
+              <div style={{ display: 'flex', gap: '8px', marginTop: '16px', flexWrap: 'wrap' }}>
                 {item.tags.map(tag => (
-                  <span key={tag} className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-sm">
+                  <span key={tag} style={{ background: '#f3f4f6', color: '#4b5563', padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem' }}>
                     #{tag}
                   </span>
                 ))}
@@ -133,8 +154,8 @@ export default function TodayPage() {
         ))}
       </div>
       
-      <div className="mt-8 text-center">
-        <p className="text-gray-500">显示前10条，共 {report.total} 条</p>
+      <div style={{ marginTop: '32px', textAlign: 'center' }}>
+        <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>显示前10条，共 {report.total} 条</p>
       </div>
     </div>
   )
