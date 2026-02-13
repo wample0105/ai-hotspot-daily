@@ -11,82 +11,188 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <head>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <style dangerouslySetInnerHTML={{ __html: `
-          /* Tailwind-like styles */
-          *, *::before, *::after { box-sizing: border-box; }
-          body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-          .min-h-screen { min-height: 100vh; }
-          .bg-gray-900 { background-color: #111827; }
-          .text-white { color: #ffffff; }
-          .p-4 { padding: 1rem; }
-          .max-w-6xl { max-width: 72rem; }
-          .mx-auto { margin-left: auto; margin-right: auto; }
+          /* UI/UX Pro Max - Soft UI Evolution + Minimal Design */
+          
+          /* Base Reset */
+          *, *::before, *::after { 
+            box-sizing: border-box; 
+            margin: 0;
+            padding: 0;
+          }
+          
+          body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #1a202c;
+            line-height: 1.6;
+          }
+          
+          /* Navigation - Soft UI */
+          .nav-soft {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+          }
+          
+          /* Card - Soft UI Evolution */
+          .card-soft {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 
+              0 4px 6px -1px rgba(0, 0, 0, 0.05),
+              0 2px 4px -1px rgba(0, 0, 0, 0.03),
+              inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+          
+          .card-soft:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+              0 20px 25px -5px rgba(0, 0, 0, 0.08),
+              0 10px 10px -5px rgba(0, 0, 0, 0.04);
+          }
+          
+          /* Primary Button */
+          .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3);
+            transition: all 0.2s ease;
+          }
+          
+          .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+          }
+          
+          /* Secondary Button */
+          .btn-secondary {
+            background: rgba(255, 255, 255, 0.9);
+            color: #374151;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            transition: all 0.2s ease;
+          }
+          
+          .btn-secondary:hover {
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+          }
+          
+          /* Score Badge */
+          .badge-score {
+            background: rgba(254, 226, 226, 0.9);
+            color: #991b1b;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: 1px solid rgba(254, 202, 202, 0.5);
+          }
+          
+          /* Link Style */
+          .link-blue {
+            color: #4f46e5;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s ease;
+          }
+          
+          .link-blue:hover {
+            color: #3730a3;
+            text-decoration: underline;
+          }
+          
+          /* Container */
+          .container-max {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+          }
+          
+          /* Spacing Utilities */
+          .py-16 { padding-top: 64px; padding-bottom: 64px; }
+          .py-6 { padding-top: 24px; padding-bottom: 24px; }
+          .px-6 { padding-left: 24px; padding-right: 24px; }
+          .p-6 { padding: 24px; }
+          .mb-2 { margin-bottom: 8px; }
+          .mb-4 { margin-bottom: 16px; }
+          .mb-6 { margin-bottom: 24px; }
+          .mb-8 { margin-bottom: 32px; }
+          .mt-12 { margin-top: 48px; }
+          .space-x-4 > * + * { margin-left: 16px; }
+          .space-y-6 > * + * { margin-top: 24px; }
+          .gap-6 { gap: 24px; }
+          
+          /* Flex Utilities */
           .flex { display: flex; }
-          .justify-between { justify-content: space-between; }
+          .flex-col { flex-direction: column; }
           .items-center { align-items: center; }
-          .text-xl { font-size: 1.25rem; }
-          .font-bold { font-weight: 700; }
-          .space-x-4 > * + * { margin-left: 1rem; }
-          .hover\\:text-blue-400:hover { color: #60a5fa; }
-          .p-6 { padding: 1.5rem; }
-          .mb-8 { margin-bottom: 2rem; }
-          .text-3xl { font-size: 1.875rem; }
-          .mb-2 { margin-bottom: 0.5rem; }
-          .text-gray-600 { color: #4b5563; }
-          .grid { display: grid; }
-          .gap-6 { gap: 1.5rem; }
-          .mb-12 { margin-bottom: 3rem; }
-          .bg-white { background-color: #ffffff; }
-          .rounded-lg { border-radius: 0.5rem; }
-          .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-          .p-6 { padding: 1.5rem; }
-          .border-l-4 { border-left-width: 4px; }
-          .border-blue-500 { border-color: #3b82f6; }
-          .text-2xl { font-size: 1.5rem; }
+          .justify-between { justify-content: space-between; }
+          .justify-center { justify-content: center; }
+          
+          /* Text Utilities */
+          .text-center { text-align: center; }
+          .text-3xl { font-size: 1.875rem; font-weight: 700; }
+          .text-xl { font-size: 1.25rem; font-weight: 600; }
           .text-sm { font-size: 0.875rem; }
           .text-gray-500 { color: #6b7280; }
-          .bg-red-100 { background-color: #fee2e2; }
-          .text-red-800 { color: #991b1b; }
-          .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
-          .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
-          .rounded-full { border-radius: 9999px; }
-          .mb-4 { margin-bottom: 1rem; }
-          .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-          .mr-4 { margin-right: 1rem; }
-          .text-blue-600 { color: #2563eb; }
-          .justify-center { justify-content: center; }
-          .gap-4 { gap: 1rem; }
-          .bg-blue-600 { background-color: #2563eb; }
-          .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
-          .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-          .rounded-lg { border-radius: 0.5rem; }
-          .hover\\:bg-blue-700:hover { background-color: #1d4ed8; }
-          .bg-gray-200 { background-color: #e5e7eb; }
+          .text-gray-600 { color: #4b5563; }
           .text-gray-800 { color: #1f2937; }
-          .hover\\:bg-gray-300:hover { background-color: #d1d5db; }
-          .bg-gray-100 { background-color: #f3f4f6; }
-          .mt-12 { margin-top: 3rem; }
-          .text-center { text-align: center; }
-          a { text-decoration: none; }
-          .underline { text-decoration: underline; }
+          
+          /* Grid */
+          .grid { display: grid; }
+          @media (min-width: 768px) {
+            .md\\:grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+          }
+          
+          /* Emoji Size */
+          .emoji-lg { font-size: 1.5rem; }
+          
+          /* Footer */
+          .footer-soft {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
+          }
         `}} />
       </head>
-      <body className="min-h-screen">
-        <nav className="bg-gray-900 text-white p-4">
-          <div className="max-w-6xl mx-auto flex justify-between items-center">
-            <a href="/" className="text-xl font-bold">🔥 AI热点日报</a>
-            <div className="space-x-4">
-              <a href="/" className="hover:text-blue-400">今日</a>
-              <a href="/today" className="hover:text-blue-400">详细</a>
-              <a href="/history" className="hover:text-blue-400">历史</a>
+      <body>
+        <nav className="nav-soft py-6">
+          <div className="container-max flex justify-between items-center">
+            <a href="/" style={{ fontSize: '1.5rem', fontWeight: 700, color: '#1f2937', textDecoration: 'none' }}>
+              🔥 AI热点日报
+            </a>
+            <div className="flex space-x-4">
+              <a href="/" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: 500 }}>今日</a>
+              <a href="/today" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: 500 }}>详细</a>
+              <a href="/history" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: 500 }}>历史</a>
             </div>
           </div>
         </nav>
-        <main className="max-w-6xl mx-auto p-6">
+        
+        <main className="container-max py-16">
           {children}
         </main>
-        <footer className="bg-gray-100 p-6 mt-12 text-center text-gray-600">
-          <p>Powered by OpenClaw | 每日7:30自动更新</p>
+        
+        <footer className="footer-soft py-6 mt-12">
+          <div className="container-max text-center text-gray-500">
+            <p>Powered by OpenClaw | 每日7:30自动更新</p>
+          </div>
         </footer>
       </body>
     </html>

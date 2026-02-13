@@ -1,6 +1,5 @@
 import fs from 'fs'
 import path from 'path'
-import Link from 'next/link'
 
 interface HotspotItem {
   rank: number
@@ -59,9 +58,9 @@ export default function HomePage() {
   
   if (!report) {
     return (
-      <div className="text-center py-20">
-        <h1 className="text-2xl font-bold mb-4">暂无数据</h1>
-        <p className="text-gray-600">等待首次热点抓取...</p>
+      <div className="text-center py-16">
+        <h1 className="text-3xl mb-4">暂无数据</h1>
+        <p className="text-gray-500">等待首次热点抓取...</p>
       </div>
     )
   }
@@ -71,44 +70,43 @@ export default function HomePage() {
   
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">📊 {dateStr} 热点简报</h1>
-        <p className="text-gray-600">共 {report.total} 条高质量内容 | 每日7:30更新</p>
+      {/* Header */}
+      <div className="mb-8 text-center">
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '12px', color: '#1f2937' }}>
+          📊 {dateStr} 热点简报
+        </h1>
+        <p style={{ color: '#6b7280', fontSize: '1.125rem' }}>
+          共 {report.total} 条高质量内容 | 每日7:30更新
+        </p>
       </div>
       
-      <div className="grid gap-6 mb-12">
+      {/* Cards Grid */}
+      <div style={{ display: 'grid', gap: '24px', marginBottom: '48px' }}>
         {top3.map((item, index) => (
-          <div key={item.rank} className="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">{getEmoji(item.source)}</span>
+          <div key={item.rank} className="card-soft p-6">
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <span className="emoji-lg">{getEmoji(item.source)}</span>
                 <div>
-                  <span className="text-sm text-gray-500">#{item.rank}</span>
-                  <h2 className="text-xl font-bold">{item.title}</h2>
+                  <span style={{ color: '#6b7280', fontSize: '0.875rem' }}>#{item.rank}</span>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 600, color: '#1f2937', margin: 0 }}>
+                    {item.title}
+                  </h2>
                 </div>
               </div>
-              <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">
-                {item.relevanceScore}分
-              </span>
+              <span className="badge-score">{item.relevanceScore}分</span>
             </div>
             
-            <p className="text-gray-600 mb-4 line-clamp-2">
+            <p style={{ color: '#4b5563', marginBottom: '16px', lineHeight: 1.6 }}>
               {item.summary || item.description}
             </p>
             
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-gray-500">
-                {item.stars && <span className="mr-4">⭐ {item.stars.toLocaleString()}</span>}
-                {item.score && <span className="mr-4">👍 {item.score}</span>}
-                {item.comments !== undefined && <span>💬 {item.comments}</span>}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+                {item.stars && <span style={{ marginRight: '16px' }}>⭐ {item.stars.toLocaleString()}</span>}
               </div>
               
-              <a 
-                href={item.url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
+              <a href={item.url} target="_blank" rel="noopener noreferrer" className="link-blue">
                 查看原文 →
               </a>
             </div>
@@ -116,20 +114,14 @@ export default function HomePage() {
         ))}
       </div>
       
-      <div className="flex justify-center gap-4">
-        <Link 
-          href="/today"
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
-        >
+      {/* CTA Buttons */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
+        <a href="/today" className="btn-primary">
           查看详细版 (TOP 10)
-        </Link>
-        
-        <Link 
-          href="/history"
-          className="bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300"
-        >
+        </a>
+        <a href="/history" className="btn-secondary">
           浏览历史归档
-        </Link>
+        </a>
       </div>
     </div>
   )
