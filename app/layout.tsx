@@ -334,7 +334,7 @@ export default function RootLayout({
           </div>
         </nav>
         
-        <main className="container-max py-16">
+        <main className="container-max" style={{ padding: '64px 16px' }}>
           {children}
         </main>
         
