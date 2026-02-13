@@ -304,6 +304,19 @@ export default function RootLayout({
           .btn-share:hover {
             background: rgba(0, 0, 0, 0.08);
           }
+          
+          /* 响应式显示/隐藏 */
+          @media (max-width: 768px) {
+            .hidden-mobile {
+              display: none !important;
+            }
+          }
+          
+          @media (min-width: 769px) {
+            .show-mobile {
+              display: none !important;
+            }
+          }
         `}} />
       </head>
       <body>
@@ -348,20 +361,6 @@ export default function RootLayout({
             </a>
           </div>
         </nav>
-        
-        <style jsx>{`
-          @media (max-width: 768px) {
-            .hidden-mobile {
-              display: none !important;
-            }
-          }
-          
-          @media (min-width: 769px) {
-            .show-mobile {
-              display: none !important;
-            }
-          }
-        `}</style>
       </body>
     </html>
   )
