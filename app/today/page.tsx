@@ -51,19 +51,6 @@ function getEmoji(source: string): string {
   return emojis[source] || '📰'
 }
 
-// 分享功能
-function shareToWeixin(title: string, url: string) {
-  if (navigator.share) {
-    navigator.share({
-      title: title,
-      url: url,
-    }).catch(() => {})
-  } else {
-    navigator.clipboard.writeText(`${title} ${url}`)
-    alert('链接已复制，可粘贴到微信分享')
-  }
-}
-
 export default function TodayPage() {
   const report = getLatestReport()
   
@@ -122,12 +109,6 @@ export default function TodayPage() {
                 {item.stars && <span>⭐ {item.stars.toLocaleString()}</span>}
                 {item.score && <span>👍 {item.score}</span>}
                 {item.comments !== undefined && <span>💬 {item.comments}</span>}
-                <button 
-                  onClick={() => shareToWeixin(item.title, item.url)}
-                  className="btn-share"
-                >
-                  📤 分享
-                </button>
               </div>
               
               <a 
