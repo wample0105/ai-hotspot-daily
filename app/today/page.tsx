@@ -135,8 +135,12 @@ export default function TodayPage() {
         ))}
       </div>
       
-      <div style={{ marginTop: '32px', textAlign: 'center' }}>
-        <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>显示前10条，共 {report.total} 条</p>
+      {/* 底部提示 + 查看全部 */}
+      <div style={{ marginTop: '32px', textAlign: 'center', padding: '24px', background: '#f9fafb', borderRadius: '12px' }}>
+        <p style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '16px' }}>显示前10条，共 {report.total} 条</p>
+        <Link href="/all" className="btn-primary">
+          查看全部 {report.total} 条热点 →
+        </Link>
       </div>
     </div>
   )
