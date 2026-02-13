@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { translateText, smartSummary, isEnglish } from '@/lib/translate'
 
 interface HotspotItem {
   rank: number
@@ -67,10 +68,85 @@ function shareToWeixin(title: string, url: string) {
       url: url,
     }).catch(() => {})
   } else {
-    // 复制到剪贴板
     navigator.clipboard.writeText(`${title} ${url}`)
     alert('链接已复制，可粘贴到微信分享')
   }
+}
+
+// 单个卡片组件（带展开/收起功能）
+function HotspotCard({ item, index }: { item: HotspotItem; index: number }) {
+  const [isExpanded, setIsExpanded] = useState(false)
+  
+  const displayText = item.summary || item.description || ''
+  const translatedText = translateText(displayText)
+  const isLongText = translatedText.length > 80
+  const showText = isExpanded ? translatedText : smartSummary(displayText, 80)
+  
+  return (
+    <div className="card-soft p-5">
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '12px', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
+          <span className="emoji-lg">{getEmoji(item.source)}</span>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
+              <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>#{index + 1}</span>
+              {index < 3 && <span className="badge-hot">HOT</span>}
+            </div>
+            <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#1f2937', margin: 0, lineHeight: 1.4, wordBreak: 'break-word' }}>
+              {item.title}
+            </h2>
+          </div>
+        </div>
+        <span className="badge-score">{item.relevanceScore}分</span>
+      </div>
+      
+      <div style={{ marginBottom: '16px' }}>
+        <p style={{ color: '#4b5563', lineHeight: 1.6, fontSize: '0.875rem', margin: 0 }}>
+          {showText}
+        </p>
+        
+        {isLongText && (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#4f46e5',
+              fontSize: '0.75rem',
+              fontWeight: 500,
+              cursor: 'pointer',
+              padding: '4px 0',
+              marginTop: '8px'
+            }}
+          >
+            {isExpanded ? '收起 ↑' : '展开全文 ↓'}
+          </button>
+        )}
+      </div>
+      
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ color: '#6b7280', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {item.stars && <span>⭐ {item.stars.toLocaleString()}</span>}
+          <button 
+            onClick={() => shareToWeixin(item.title, item.url)}
+            className="btn-share"
+          >
+            📤 分享
+          </button>
+        </div>
+        
+        <a 
+          href={item.url} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="link-blue"
+          style={{ fontSize: '0.875rem' }}
+        >
+          查看原文 →
+        </a>
+      </div>
+    </div>
+  )
 }
 
 export default function HomePage() {
@@ -150,50 +226,8 @@ export default function HomePage() {
       
       {/* Cards Grid */}
       <div style={{ display: 'grid', gap: '20px', marginBottom: '48px' }}>
-        {top3.map((item) => (
-          <div key={item.rank} className="card-soft p-6">
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '12px', gap: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
-                <span className="emoji-lg">{getEmoji(item.source)}</span>
-                <div style={{ minWidth: 0, flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
-                    <span style={{ color: '#6b7280', fontSize: '0.75rem' }}>#{item.rank}</span>
-                    {item.rank <= 3 && <span className="badge-hot">HOT</span>}
-                  </div>
-                  <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#1f2937', margin: 0, lineHeight: 1.4, wordBreak: 'break-word' }}>
-                    {item.title}
-                  </h2>
-                </div>
-              </div>
-              <span className="badge-score">{item.relevanceScore}分</span>
-            </div>
-            
-            <p style={{ color: '#4b5563', marginBottom: '16px', lineHeight: 1.6, fontSize: '0.875rem' }}>
-              {item.summary || item.description}
-            </p>
-            
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-              <div style={{ color: '#6b7280', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                {item.stars && <span>⭐ {item.stars.toLocaleString()}</span>}
-                <button 
-                  onClick={() => shareToWeixin(item.title, item.url)}
-                  className="btn-share"
-                >
-                  📤 分享
-                </button>
-              </div>
-              
-              <a 
-                href={item.url} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="link-blue"
-                style={{ fontSize: '0.875rem' }}
-              >
-                查看原文 →
-              </a>
-            </div>
-          </div>
+        {top3.map((item, index) => (
+          <HotspotCard key={item.rank} item={item} index={index} />
         ))}
       </div>
       
