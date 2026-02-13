@@ -53,7 +53,8 @@ function getArchives(): ArchiveItem[] {
 
 // 获取所有月份
 function getMonths(archives: ArchiveItem[]): string[] {
-  const months = [...new Set(archives.map(a => a.month))]
+  const monthSet = new Set(archives.map(a => a.month))
+  const months = Array.from(monthSet)
   return months.sort().reverse()
 }
 
