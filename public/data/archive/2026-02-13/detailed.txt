@@ -1,0 +1,55 @@
+🔥 2026-02-13 热点详细报告
+📊 共 63 条高质量内容
+
+---
+
+🐙 1. antigravity-awesome-skills 🔥100分
+📋 摘要: The Ultimate Collection of 800+ Agentic Skills for Claude Code/Antigravity/Cursor.
+🔗 https://github.com/sickn33/antigravity-awesome-skills
+⭐ 8635 stars | 📝 【实战】antigravity-awesome-skills：从零开始使用指南
+
+🐙 2. ai-guide 🔥100分
+📋 摘要: 程序员鱼皮的 AI 资源大全 + Vibe Coding 零基础教程，分享大模型选择指南（DeepSeek / GPT / Gemini / Claude）、最新 AI 资讯、Prompt 提示词大全、AI 知识百科（RAG / MCP...
+🔗 https://github.com/liyupi/ai-guide
+⭐ 6789 stars | 📝 ai-guide完整教程
+
+🐙 3. refly 🔥100分
+📋 摘要: The first open-source agent skills builder. Define skills by vibe workflow, run on Claude Code, Cursor, Codex & more.
+🔗 https://github.com/refly-ai/refly
+⭐ 6600 stars | 📝 AI新动态：refly
+
+🐙 4. AionUi 🔥100分
+📋 摘要: Free, local, open-source 24/7 Cowork and OpenClaw for Gemini CLI, Claude Code, Codex, OpenCode, Qwen Code, Goose CLI,...
+🔗 https://github.com/iOfficeAI/AionUi
+⭐ 15327 stars | 📝 AI新动态：AionUi
+
+🐙 5. LangBot 🔥100分
+📋 摘要: Production-grade platform for building agentic IM bots - 生产级多平台智能机器人开发平台. 提供 Agent、知识库编排、插件系统 / Bots for Discord /...
+🔗 https://github.com/langbot-app/LangBot
+⭐ 15273 stars | 📝 AI新动态：LangBot
+
+🐙 6. nanoclaw 🔥100分
+📋 摘要: A lightweight alternative to Clawdbot / OpenClaw that runs in Apple containers for security.
+🔗 https://github.com/qwibitai/nanoclaw
+⭐ 7575 stars | 📝 AI新动态：nanoclaw
+
+🐙 7. antigravity-claude-proxy 🔥100分
+📋 摘要: Proxy that exposes Antigravity provided claude / gemini models, so we can use them in Claude Code and OpenClaw...
+🔗 https://github.com/badrisnarayanan/antigravity-claude-proxy
+⭐ 2773 stars | 📝 AI新动态：antigravity-claude-proxy
+
+🐙 8. buildwithclaude 🔥100分
+📋 摘要: A single hub to find Claude Skills, Agents, Commands, Hooks, Plugins, and Marketplace collections to extend Claude...
+🔗 https://github.com/davepoon/buildwithclaude
+⭐ 2408 stars | 📝 AI新动态：buildwithclaude
+
+🐙 9. awesome-ai-system-prompts 🔥100分
+📋 摘要: 🧠 Curated collection of system prompts for top AI tools. Perfect for AI agent builders and prompt engineers.
+🔗 https://github.com/dontriskit/awesome-ai-system-prompts
+⭐ 5122 stars | 📝 AI新动态：awesome-ai-system-prompts
+
+🐙 10. x-cmd 🔥100分
+📋 摘要: Best Buddy for AI Agents like Clawdbot, Claude Code. Bootstrap 1000+ command line tools in seconds.
+🔗 https://github.com/x-cmd/x-cmd
+⭐ 4013 stars | 📝 AI新动态：x-cmd
+
