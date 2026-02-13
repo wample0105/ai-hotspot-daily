@@ -213,7 +213,7 @@ export default function HomePage() {
   })
 
   return (
-    <div>
+    <div style={{ padding: '0 16px' }}>
       {/* Header */}
       <div className="mb-8 text-center">
         <h1 className="text-3xl mb-2">
