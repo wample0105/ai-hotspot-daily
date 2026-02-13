@@ -6,7 +6,7 @@ interface ArchiveItem {
   date: string
   dateStr: string
   count: number
-  weekday: number
+  month: string
 }
 
 function getArchives(): ArchiveItem[] {
@@ -42,7 +42,7 @@ function getArchives(): ArchiveItem[] {
           day: 'numeric'
         }),
         count,
-        weekday: dateObj.getDay()
+        month: dateObj.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })
       }
     })
   } catch (error) {
@@ -51,54 +51,16 @@ function getArchives(): ArchiveItem[] {
   }
 }
 
-// 获取月份名称
-function getMonthName(dateStr: string): string {
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' })
+// 获取所有月份
+function getMonths(archives: ArchiveItem[]): string[] {
+  const months = [...new Set(archives.map(a => a.month))]
+  return months.sort().reverse()
 }
-
-// 生成日历网格
-function generateCalendarGrid(archives: ArchiveItem[]) {
-  if (archives.length === 0) return []
-  
-  const firstDate = new Date(archives[archives.length - 1].date)
-  const year = firstDate.getFullYear()
-  const month = firstDate.getMonth()
-  
-  const firstDayOfMonth = new Date(year, month, 1)
-  const lastDayOfMonth = new Date(year, month + 1, 0)
-  
-  const startDay = firstDayOfMonth.getDay() // 0 = 周日
-  const daysInMonth = lastDayOfMonth.getDate()
-  
-  const grid = []
-  
-  // 空白格（月初之前的）
-  for (let i = 0; i < startDay; i++) {
-    grid.push(null)
-  }
-  
-  // 日期格
-  for (let day = 1; day <= daysInMonth; day++) {
-    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-    const archive = archives.find(a => a.date === dateStr)
-    grid.push({
-      day,
-      date: dateStr,
-      hasData: !!archive,
-      count: archive?.count || 0
-    })
-  }
-  
-  return grid
-}
-
-const weekdays = ['日', '一', '二', '三', '四', '五', '六']
 
 export default function HistoryPage() {
   const archives = getArchives()
-  const calendarGrid = generateCalendarGrid(archives)
-  const currentMonth = archives.length > 0 ? getMonthName(archives[0].date) : ''
+  const months = getMonths(archives)
+  const currentMonth = months[0] || ''
   
   if (archives.length === 0) {
     return (
@@ -137,126 +99,109 @@ export default function HistoryPage() {
         </div>
       </div>
       
-      {/* 日历视图 */}
-      <div className="card-soft p-4 mb-6">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <h2 style={{ fontSize: '1rem', fontWeight: 600, margin: 0 }}>{currentMonth}</h2>
-          <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>📅 日历视图</span>
+      {/* 月份选择器 */}
+      {months.length > 1 && (
+        <div className="card-soft p-4 mb-6">
+          <div style={{ fontSize: '0.875rem', fontWeight: 600, marginBottom: '12px', color: '#374151' }}>📅 选择月份</div>
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            {months.map((month, index) => (
+              <button
+                key={month}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '20px',
+                  border: 'none',
+                  fontSize: '0.875rem',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  background: index === 0 ? '#4f46e5' : '#f3f4f6',
+                  color: index === 0 ? 'white' : '#4b5563'
+                }}
+              >
+                {month}
+              </button>
+            ))}
+          </div>
         </div>
-        
-        {/* 星期标题 */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px', marginBottom: '8px' }}>
-          {weekdays.map(day => (
-            <div key={day} style={{ textAlign: 'center', fontSize: '0.75rem', color: '#9ca3af', padding: '8px 0' }}>
-              {day}
-            </div>
-          ))}
-        </div>
-        
-        {/* 日期网格 */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px' }}>
-          {calendarGrid.map((cell, index) => (
-            <div key={index}>
-              {cell === null ? (
-                <div style={{ aspectRatio: '1', borderRadius: '8px' }} />
-              ) : cell.hasData ? (
-                <Link
-                  href={`/history/${cell.date}`}
-                  style={{
-                    aspectRatio: '1',
-                    borderRadius: '8px',
-                    background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
-                    color: 'white',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    textDecoration: 'none',
-                    fontSize: '0.75rem',
-                    fontWeight: 600,
-                    position: 'relative'
-                  }}
-                >
-                  <span>{cell.day}</span>
-                  <span style={{ fontSize: '0.625rem', opacity: 0.9 }}>{cell.count}条</span>
-                </Link>
-              ) : (
-                <div
-                  style={{
-                    aspectRatio: '1',
-                    borderRadius: '8px',
-                    background: '#f3f4f6',
-                    color: '#9ca3af',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.75rem'
-                  }}
-                >
-                  {cell.day}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
+      )}
       
-      {/* 列表视图 */}
+      {/* 时间线视图 */}
       <div className="mb-4">
-        <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '12px' }}>📋 列表视图</h2>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+          <h2 style={{ fontSize: '1rem', fontWeight: 600 }}>📋 时间线</h2>
+          <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{currentMonth}</span>
+        </div>
       </div>
       
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {archives.map((archive) => (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+        {archives.map((archive, index) => (
           <Link
             key={archive.date}
             href={`/history/${archive.date}`}
-            className="card-soft"
             style={{
-              padding: '16px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between',
-              textDecoration: 'none'
+              padding: '16px 0',
+              textDecoration: 'none',
+              borderBottom: index < archives.length - 1 ? '1px solid #f3f4f6' : 'none',
+              position: 'relative'
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div
-                style={{
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '12px',
-                  background: 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)',
-                  color: '#4f46e5',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.875rem',
-                  fontWeight: 700
-                }}
-              >
-                <span>{archive.dateStr.split(' ')[0]}</span>
-                <span style={{ fontSize: '0.625rem' }}>{archive.dateStr.split(' ')[1]}</span>
+            {/* 时间线 */}
+            <div style={{ 
+              position: 'absolute', 
+              left: '24px', 
+              top: 0, 
+              bottom: index < archives.length - 1 ? 0 : '50%',
+              width: '2px', 
+              background: '#e5e7eb',
+              zIndex: 0
+            }} />
+            
+            {/* 日期标记 */}
+            <div 
+              style={{
+                width: '50px',
+                height: '50px',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                color: 'white',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                zIndex: 1,
+                flexShrink: 0,
+                marginRight: '16px'
+              }}
+            >
+              <span>{new Date(archive.date).getDate()}日</span>
+              <span style={{ fontSize: '0.625rem', opacity: 0.9 }}>{['日','一','二','三','四','五','六'][new Date(archive.date).getDay()]}</span>
+            </div>
+            
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937', marginBottom: '4px' }}>
+                {new Date(archive.date).toLocaleDateString('zh-CN', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric'
+                })}
               </div>
-              <div>
-                <div style={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937', marginBottom: '4px' }}>
-                  {new Date(archive.date).toLocaleDateString('zh-CN', { 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric',
-                    weekday: 'long'
-                  })}
-                </div>
-                <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
-                  {archive.count} 条热点
-                </div>
+              <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                {archive.count} 条热点 · 点击查看详情
               </div>
             </div>
             
-            <span style={{ color: '#4f46e5', fontSize: '0.875rem' }}>查看 →</span>
+            <span style={{ color: '#4f46e5', fontSize: '0.875rem', marginLeft: '8px' }}>→</span>
           </Link>
         ))}
+      </div>
+      
+      {/* 底部提示 */}
+      <div style={{ marginTop: '24px', textAlign: 'center', padding: '20px', background: '#f9fafb', borderRadius: '12px' }}>
+        <p style={{ color: '#6b7280', fontSize: '0.875rem', margin: 0 }}>💡 每天7:30自动更新 · 历史数据永久保存</p>
       </div>
     </div>
   )
