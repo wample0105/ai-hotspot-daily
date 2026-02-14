@@ -155,7 +155,9 @@ export default function HomePage() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    fetch('/data/archive/2026-02-13/full.json')
+    // 动态获取今天日期
+    const today = new Date().toISOString().split('T')[0]
+    fetch(`/data/archive/${today}/full.json`)
       .then(res => res.json())
       .then(data => {
         setReport(data)
